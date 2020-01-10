@@ -4,7 +4,7 @@ Name:           libzfcphbaapi
 Summary:        HBA API for the zFCP device driver
 Group:          System Environment/Libraries
 Version:        2.1
-Release:        2%{?dist}
+Release:        4%{?dist}
 License:        CPL
 URL:            http://www.ibm.com/developerworks/linux/linux390/zfcp-hbaapi.html
 # http://www.ibm.com/developerworks/linux/linux390/zfcp-hbaapi-%%{hbaapiver}.html
@@ -109,6 +109,12 @@ grep -q -e "^libzfcphbaapi" /etc/hba.conf &&
 
 
 %changelog
+* Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 2.1-4
+- Mass rebuild 2014-01-24
+
+* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 2.1-3
+- Mass rebuild 2013-12-27
+
 * Wed May 29 2013 Dan Horák <dan[at]danny.cz> - 2.1-2
 - add missing compatibility Provides
 - exclude plugin soname from Provides
