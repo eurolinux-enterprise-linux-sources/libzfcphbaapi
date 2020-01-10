@@ -1,0 +1,158 @@
+---
+ lib-zfcp-hbaapi-2.1/vlib_sysfs.c |   52 +++++++++++++++++++--------------------
+ 1 file changed, 26 insertions(+), 26 deletions(-)
+
+--- a/lib-zfcp-hbaapi-2.1/vlib_sysfs.c
++++ b/lib-zfcp-hbaapi-2.1/vlib_sysfs.c
+@@ -47,13 +47,13 @@ static HBA_STATUS addPortByName(struct v
+ 
+ 	ret = sfhelper_getProperty(path, "node_name", attr);
+ 	if (!ret)
+-		port.wwnn = strtol(attr, NULL, 16);
++		port.wwnn = strtoull(attr, NULL, 16);
+ 	ret = sfhelper_getProperty(path, "port_name", attr);
+ 	if (!ret)
+-		port.wwpn = strtol(attr, NULL, 16);
++		port.wwpn = strtoull(attr, NULL, 16);
+ 	ret = sfhelper_getProperty(path, "port_id", attr);
+ 	if (!ret)
+-		port.did = strtol(attr, NULL, 16);
++		port.did = strtoul(attr, NULL, 16);
+ 
+ 	addPortToRepos(adapter, &port);
+ 	return HBA_STATUS_OK;
+@@ -118,13 +118,13 @@ static HBA_STATUS addAdapterByDevPath(ch
+ 
+ 	ret = sfhelper_getProperty(classpath, "node_name", attr);
+ 	if (!ret)
+-		a.ident.wwnn = strtol(attr, NULL, 16);
++		a.ident.wwnn = strtoull(attr, NULL, 16);
+ 	ret = sfhelper_getProperty(classpath, "port_name", attr);
+ 	if (!ret)
+-		a.ident.wwpn = strtol(attr, NULL, 16);
++		a.ident.wwpn = strtoull(attr, NULL, 16);
+ 	ret = sfhelper_getProperty(classpath, "port_id", attr);
+ 	if (!ret)
+-		a.ident.did = strtol(attr, NULL, 16);
++		a.ident.did = strtoul(attr, NULL, 16);
+ 
+ 	addAdapterToRepos(&a);
+ 
+@@ -151,17 +151,17 @@ static HBA_STATUS getPortAttributes(HBA_
+ 	/* Worldwide Port and Node Name */
+ 	ret = sfhelper_getProperty(classpath, "node_name", attr);
+ 	if (!ret)
+-		vlib_wwn_to_HBA_WWN(strtol(attr, NULL, 16),
++		vlib_wwn_to_HBA_WWN(strtoull(attr, NULL, 16),
+ 					&(*pPortattributes)->NodeWWN);
+ 	ret = sfhelper_getProperty(classpath, "port_name", attr);
+ 	if (!ret)
+-		vlib_wwn_to_HBA_WWN(strtol(attr, NULL, 16),
++		vlib_wwn_to_HBA_WWN(strtoull(attr, NULL, 16),
+ 					&(*pPortattributes)->PortWWN);
+ 
+ 	/* PortFcId */
+ 	ret = sfhelper_getProperty(classpath, "port_id", attr);
+ 	if (!ret)
+-		(*pPortattributes)->PortFcId = strtol(attr, NULL, 16);
++		(*pPortattributes)->PortFcId = strtoul(attr, NULL, 16);
+ 
+ 	/* Port Type */
+ 	ret = sfhelper_getProperty(classpath, "port_type", attr);
+@@ -361,7 +361,7 @@ int sysfs_getUnitsFromPort(struct vlib_p
+ 		strcat(unitPath, dirent);
+ 		ret = sfhelper_getProperty(unitPath, "fcp_lun", attr);
+ 		if (!ret)
+-			unit.fcLun = strtol(attr, NULL, 16);
++			unit.fcLun = strtoull(attr, NULL, 16);
+ 		sg_dir = sfhelper_opendir(unitPath);
+ 		if (sg_dir == NULL)
+ 			continue;
+@@ -514,7 +514,7 @@ HBA_STATUS sysfs_getAdapterAttributes(HB
+ 	ret = sfhelper_getProperty(adapter->ident.sysfsPath, "card_version",
+ 									attr);
+ 	if (!ret) {
+-		a = strtol(attr, NULL, 16);
++		a = strtoul(attr, NULL, 16);
+ 		strcpy((*pAttrs)->ModelDescription,
+ 				"zSeries/System z Fibre Channel Adapter ");
+ 		switch (a) {
+@@ -612,63 +612,63 @@ HBA_STATUS sysfs_getPortStatistics(HBA_P
+ 
+ 	ret = sfhelper_getProperty(path, "seconds_since_last_reset", attr);
+ 	if (!ret)
+-		(*pS)->SecondsSinceLastReset = strtol(attr, NULL, 16);
++		(*pS)->SecondsSinceLastReset = strtoull(attr, NULL, 16);
+ 
+ 	ret = sfhelper_getProperty(path, "tx_frames", attr);
+ 	if (!ret)
+-		(*pS)->TxFrames = strtol(attr, NULL, 16);
++		(*pS)->TxFrames = strtoull(attr, NULL, 16);
+ 
+ 	ret = sfhelper_getProperty(path, "tx_words", attr);
+ 	if (!ret)
+-		(*pS)->TxWords = strtol(attr, NULL, 16);
++		(*pS)->TxWords = strtoull(attr, NULL, 16);
+ 
+ 	ret = sfhelper_getProperty(path, "rx_frames", attr);
+ 	if (!ret)
+-		(*pS)->RxFrames = strtol(attr, NULL, 16);
++		(*pS)->RxFrames = strtoull(attr, NULL, 16);
+ 
+ 	ret = sfhelper_getProperty(path, "rx_words", attr);
+ 	if (!ret)
+-		(*pS)->RxWords = strtol(attr, NULL, 16);
++		(*pS)->RxWords = strtoull(attr, NULL, 16);
+ 
+ 	ret = sfhelper_getProperty(path, "lip_count", attr);
+ 	if (!ret)
+-		(*pS)->LIPCount = strtol(attr, NULL, 16);
++		(*pS)->LIPCount = strtoull(attr, NULL, 16);
+ 
+ 	ret = sfhelper_getProperty(path, "nos_count", attr);
+ 	if (!ret)
+-		(*pS)->NOSCount = strtol(attr, NULL, 16);
++		(*pS)->NOSCount = strtoull(attr, NULL, 16);
+ 
+ 	ret = sfhelper_getProperty(path, "error_frames", attr);
+ 	if (!ret)
+-		(*pS)->ErrorFrames = strtol(attr, NULL, 16);
++		(*pS)->ErrorFrames = strtoull(attr, NULL, 16);
+ 
+ 	ret = sfhelper_getProperty(path, "dumped_frames", attr);
+ 	if (!ret)
+-		(*pS)->DumpedFrames = strtol(attr, NULL, 16);
++		(*pS)->DumpedFrames = strtoull(attr, NULL, 16);
+ 
+ 	ret = sfhelper_getProperty(path, "link_failure_count", attr);
+ 	if (!ret)
+-		(*pS)->LinkFailureCount = strtol(attr, NULL, 16);
++		(*pS)->LinkFailureCount = strtoull(attr, NULL, 16);
+ 
+ 	ret = sfhelper_getProperty(path, "loss_of_sync_count", attr);
+ 	if (!ret)
+-		(*pS)->LossOfSyncCount = strtol(attr, NULL, 16);
++		(*pS)->LossOfSyncCount = strtoull(attr, NULL, 16);
+ 
+ 	ret = sfhelper_getProperty(path, "loss_of_signal_count", attr);
+ 	if (!ret)
+-		(*pS)->LossOfSignalCount = strtol(attr, NULL, 16);
++		(*pS)->LossOfSignalCount = strtoull(attr, NULL, 16);
+ 
+ 	ret = sfhelper_getProperty(path, "prim_seq_protocol_err_count", attr);
+ 	if (!ret)
+-		(*pS)->PrimitiveSeqProtocolErrCount = strtol(attr, NULL, 16);
++		(*pS)->PrimitiveSeqProtocolErrCount = strtoull(attr, NULL, 16);
+ 
+ 	ret = sfhelper_getProperty(path, "invalid_tx_word_count", attr);
+ 	if (!ret)
+-		(*pS)->InvalidTxWordCount = strtol(attr, NULL, 16);
++		(*pS)->InvalidTxWordCount = strtoull(attr, NULL, 16);
+ 
+ 	ret = sfhelper_getProperty(path, "invalid_crc_count", attr);
+ 	if (!ret)
+-		(*pS)->InvalidCRCCount = strtol(attr, NULL, 16);
++		(*pS)->InvalidCRCCount = strtoull(attr, NULL, 16);
+ 
+ 	return HBA_STATUS_OK;
+ }

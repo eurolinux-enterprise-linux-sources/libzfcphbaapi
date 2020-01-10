@@ -1,0 +1,48 @@
+---
+ lib-zfcp-hbaapi-2.1/vlib_sysfs.c |   23 ++++++++++++++++++++---
+ 1 file changed, 20 insertions(+), 3 deletions(-)
+
+--- a/lib-zfcp-hbaapi-2.1/vlib_sysfs.c
++++ b/lib-zfcp-hbaapi-2.1/vlib_sysfs.c
+@@ -310,14 +310,15 @@ HBA_STATUS sysfs_createAndReadConfigAdap
+ int sysfs_getUnitsFromPort(struct vlib_port *port)
+ {
+ 	char path[PATH_MAX];
+-	char unitPath[PATH_MAX];
++	char unitPath[PATH_MAX], unitPath2[PATH_MAX];
+ 	char attr[ATTR_MAX];
+-	char *sg;
++	char *sg, *sg2;
+ 	struct vlib_unit unit;
+ 	struct vlib_adapter *adapter;
+-	sfhelper_dir *dir, *sg_dir;
++	sfhelper_dir *dir, *sg_dir, *sg_dir2;
+ 	char *dirent;
+ 	int ret;
++	uint32_t sgindex;
+ 
+ 	adapter = getAdapterByHostNo(port->host);
+ 	if (!adapter)
+@@ -369,6 +370,22 @@ int sysfs_getUnitsFromPort(struct vlib_p
+ 			if (ret == 1)
+ 				/* successful match */
+ 				break;
++			/* search match without CONFIG_SYSFS_DEPRECATED[_V2] */
++			if (strncmp(sg, "scsi_generic", 13 /* full */) != 0)
++				continue;
++			snprintf(unitPath2, PATH_MAX, "%s/%s", unitPath, sg);
++			sg_dir2 = sfhelper_opendir(unitPath2);
++			if (sg_dir2 == NULL)
++				continue;
++			while (sg2 = sfhelper_getNextDirEnt(sg_dir2)) {
++				if (sscanf(sg2, "sg%u", &sgindex) != 1)
++					continue;
++				snprintf(unit.sg_dev, sizeof(unit.sg_dev),
++					 "%s", sg2);
++				/* successful match */
++				break;
++			}
++			sfhelper_closedir(sg_dir2);
+ 		}
+ 		sfhelper_closedir(sg_dir);
+ 		addUnitToRepos(port, &unit);
